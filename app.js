@@ -5,11 +5,6 @@ import Globals from "./globals.js";
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 
-//ömer
-
-console.log("ömer")
-
-console.log(window.innerWidth,window.innerHeight)
 
 let globals = new Globals();
 let gridManager = new GridManager();

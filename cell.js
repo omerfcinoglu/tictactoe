@@ -7,7 +7,9 @@ export default class Cell{
         this.size = globals.cellSize;
         this.position = {x : (i * this.size) + 5  , y : (j *  this.size)+5}
 
-        this.color = globals.colors.xo
+        this.color = 'hsla(100,20%,50%,1)'
+        // this.color = globals.colors.xo
+
         
         this.clicked = false;
         this.x = false;
@@ -54,6 +56,8 @@ export default class Cell{
         }
         
     }
+
+   
 
     playX(){
         this.clicked = true;

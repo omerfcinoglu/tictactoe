@@ -18,6 +18,11 @@ export default class Cell{
 
     }
 
+    resizeCell(i,j){
+        this.size = globals.cellSize;
+        this.position = {x : (i * this.size) + 5  , y : (j *  this.size)+5}
+    }
+
     draw(){
         ctx.beginPath();
         ctx.rect(this.position.x,this.position.y,this.size,this.size);
@@ -29,7 +34,7 @@ export default class Cell{
         if(!this.clicked) return;
         if(this.x){
             ctx.beginPath();
-            ctx.font = "300px arial";
+            ctx.font = `${this.size}px arial`;
             ctx.fillStyle = this.color;
 
             ctx.fillText(
@@ -43,7 +48,8 @@ export default class Cell{
         }
         else{
             ctx.beginPath();
-            ctx.font = "300px arial";
+            ctx.font = `${this.size}px arial`;
+
             ctx.fillStyle = this.color;
 
             ctx.fillText(
@@ -67,7 +73,6 @@ export default class Cell{
     playO(){
         this.clicked = true;
         this.x = false;
-
     }
     
     update(){

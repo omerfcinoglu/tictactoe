@@ -1,4 +1,4 @@
-import { globals } from "./app.js";
+import { globals , game } from "./app.js";
 import Cell from "./cell.js";
 
 export default class GridManager {
@@ -6,11 +6,9 @@ export default class GridManager {
         this.grid = new Array(this.colm);
         this.row = globals.rows;
         this.colm = globals.columns;
-        this.turnPlayed = false;
         this.winnerCount = 0;
         this.winnerStackCount = globals.winnerStackCount;
-        console.log(this.winnerStackCount);
-        this.stack = [];
+        this.winnerCellStack = [];
     }
 
     initGrid() {
@@ -22,8 +20,12 @@ export default class GridManager {
         }
     }
 
-    update() {
-
+    resizeGrid(){
+        for (let i = 0; i < this.colm; i++) {
+            for (let j = 0; j < this.row; j++) {
+                this.grid[i][j].resizeCell(i,j)
+            }
+        }
     }
 
     draw() {
@@ -34,90 +36,17 @@ export default class GridManager {
         })
     }
 
-    //todo rename a and b methods !!
-    a(i, j) {
-        let uppppi = i;
-        let uppppj = j;
-
-        for (let index = 0; index < globals.dx.length; index++) {
-            let dx = globals.dx[index];
-            let dy = globals.dy[index];
-
-            let nx = i + dx;
-            let ny = j + dy;
-
-            let currentCell = this.grid[i][j];
-
-
-            if (this.isInBounds(nx, ny)) {
-                let neighbor = this.grid[nx][ny];
-                if (currentCell.x === neighbor.x) {
-                    this.winnerCount++;
-                    this.stack.push(
-                        {
-                            "current_i": uppppi,
-                            "current_j": uppppj,
-                            "neighbor_i": nx,
-                            "neighbor_j": ny,
-                            "dx": dx,
-                            "dy": dy
-                        }
-                    )
-
-                    this.b(this.stack.pop())
-
-                }
-            }
-
-        }
-    }
-
     isInBounds(nx, ny) {
         return nx >= 0 && ny >= 0 && nx < globals.rows && ny < globals.columns
     }
 
-    b(stackInfo) {
-        for (let index = -1 * this.winnerStackCount; index < this.winnerStackCount ; index++) {
-            let newDx = stackInfo.dx * index;
-            let newDy = stackInfo.dy * index;
-            if(this.isInBounds(newDx,newDy)){
-                let currentCell = this.grid[stackInfo.current_i][stackInfo.current_j];
-                if(this.grid[newDx][newDy].x === currentCell.x){
-                    this.winnerCount++;
-                    if(this.winnerCount === this.winnerStackCount){
-                        console.log("WON");
-                    }
-                }
-            }
-        }
-
-        //     let newNx = stackInfo.current_i + newDx;
-        //     let newNy = stackInfo.current_j + newDy;
-        //     let current = this.grid[stackInfo.current_i][stackInfo.current_j]
-
-        //     if(this.isInBounds(newNx,newNy)){
-        //           let newNeigbor = this.grid[newNx][newNy]
-        //           if(current.x === newNeigbor.x){
-        //             this.winnerCount++;
-        //             this.stack.push(
-        //                 {
-        //                     "current_i": stackInfo.current_i,
-        //                     "current_j": stackInfo.current_j,
-        //                     "neighbor_i": newNx,
-        //                     "neighbor_j": newNy,
-        //                     "dx": newDx,
-        //                     "dy": newDy
-        //                  }
-        //             )
-        //           }   
-
-        //     }
-        // }
-        // if(this.stack.length>0){
-        //     this.b(this.stack.pop());
-        // }
+    celebrateTheWinnerCells(){
+        console.log("win")
+        game.isOver = true;
+        this.winnerCellStack.forEach(cellInfo=>{
+            this.grid[cellInfo.i][cellInfo.j].color = globals.colors.winnerCellColor
+        })
     }
-
 
     checkWin(i,j){
         let currentCell = this.grid[i][j];
@@ -133,12 +62,13 @@ export default class GridManager {
       
             if(this.isInBounds(nx,ny)){
                 let neighbor = this.grid[nx][ny]
-                
-                if(neighbor.x === currentCell.x){
-                    neighbor.color = "orange";
+                //reset stack 
+                this.winnerCellStack = [];
+                if(neighbor.x === currentCell.x && neighbor.clicked){
                     for (let index = -1 * this.winnerStackCount; index < this.winnerStackCount; index++) {
+
                         if(this.winnerCount === this.winnerStackCount){
-                            console.log("win")
+                            this.celebrateTheWinnerCells();
                             return;
                         }
 
@@ -148,11 +78,11 @@ export default class GridManager {
                         let newNx = nx + newDx;
                         let newNy = ny + newDy;
 
-
                         if(this.isInBounds(newNx,newNy)){
                             let _neighbor = this.grid[newNx][newNy]
-                            if(_neighbor.x === currentCell.x){
-                                neighbor.color = "orange";
+                            if(_neighbor.x === currentCell.x && _neighbor.clicked){
+                                //push the winner cell info
+                                this.winnerCellStack.push({i : _neighbor.i , j : _neighbor.j})
                                 this.winnerCount++;
                                 continue;
                             } 
@@ -168,19 +98,27 @@ export default class GridManager {
     playTurn(turnX, mousePos) {
         let i = mousePos.x;
         let j = mousePos.y;
-        this.turnPlayed = false;
+        
+        game.turnPlayed = false;
         if (this.grid[i][j].clicked) return;
         if (turnX) {
-            this.grid[i][j].playX();
-            this.turnPlayed = true;
-            this.checkWin(i,j);
+            this.grid[i][j].playX(); // X playing
+            game.turnPlayed = true;  //switching X - O 
+            this.winnerCount = 0;    //didnt like this code
+            this.checkWin(i,j);      
         }
         else {
-            this.grid[i][j].playO();
-            this.turnPlayed = true;
-        }       
+            this.grid[i][j].playO();  // O playing
+            game.turnPlayed = true;   //switching X - O 
+            this.winnerCount = 0;
+            this.checkWin(i,j);
+        }
+        game.totalMove++;
+
+        //Checking tie
+        if(game.totalMove === game.maxMoveCount && !game.isOver){
+            console.log("Tie")
+            game.isOver = true;
+        }
     }
-
-
-
 }

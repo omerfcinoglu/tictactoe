@@ -10,6 +10,12 @@ let globals = new Globals();
 let gridManager = new GridManager();
 let j = 0; let i = 0;
 
+let canvasSize = 
+      window.innerWidth > window.innerHeight 
+    ? window.innerWidth - window.innerHeight
+    : window.innerHeight - window.innerWidth  
+
+    
 canvas.width = 910;
 canvas.height = 910;
 
@@ -36,6 +42,7 @@ canvas.addEventListener("click", (event) => {
 
 function gameLoop(){
     gridManager.draw();
+    gridManager.update();
     window.requestAnimationFrame(gameLoop)
 }
 

@@ -5,10 +5,9 @@ export default class Cell{
         this.i = i;
         this.j = j;
         this.size = globals.cellSize;
-        this.position = {x : (i * this.size) + 5  , y : (j *  this.size)+5}
+        this.position = {x : (i * this.size)   , y : (j *  this.size)}
 
-        this.color = 'hsla(100,20%,50%,1)'
-        // this.color = globals.colors.xo
+        this.color = globals.colors.xo
 
         
         this.clicked = false;
@@ -20,7 +19,7 @@ export default class Cell{
 
     resizeCell(i,j){
         this.size = globals.cellSize;
-        this.position = {x : (i * this.size) + 5  , y : (j *  this.size)+5}
+        this.position = {x : (i * this.size)  , y : (j *  this.size)}
     }
 
     draw(){
@@ -63,8 +62,6 @@ export default class Cell{
         
     }
 
-   
-
     playX(){
         this.clicked = true;
         this.x = true;
@@ -73,6 +70,12 @@ export default class Cell{
     playO(){
         this.clicked = true;
         this.x = false;
+    }
+
+    resetCell(){
+        this.clicked = false;
+        this.x = false;
+        this.color = globals.colors.xo;
     }
     
     update(){

@@ -5,32 +5,42 @@ import GridManager from "./gird.js";
 
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
+const restartButton = document.getElementById('restartButton');
 
 
 let globals = new Globals();
 let game = new Game();
 let gridManager = new GridManager();
 
+
 game.maxMoveCount = gridManager.row  * gridManager.colm;
     
-let canvasSize = Math.min(window.innerWidth,window.innerHeight)
+let canvasSize = Math.min(window.innerWidth / 1.5,window.innerHeight /1.5)
 
 canvas.width = canvasSize;
 canvas.height = canvasSize;
 
 globals.cellSize = canvasSize / globals.rows
 
-console.log(canvasSize)
 
 document.getElementById("body").style.backgroundColor = globals.colors.bodyBg;
 canvas.style.backgroundColor = globals.colors.canvasBg;
 // canvas.style.border = `15px solid ${globals.colors.gridBorder}`; 
 
-gridManager.initGrid();
 
+
+
+
+gridManager.initGrid();
+game.displayScore();
+
+
+restartButton.addEventListener('click' ,  ()=>{
+    game.restart(gridManager);
+})
 
 window.addEventListener('resize', ()=>{
-    canvasSize = Math.min(window.innerWidth,window.innerHeight)
+    canvasSize  = Math.min(window.innerWidth / 1.5,window.innerHeight /1.5)
     canvas.width = canvasSize;
     canvas.height = canvasSize;
     globals.cellSize = canvasSize / globals.rows
@@ -40,7 +50,6 @@ window.addEventListener('resize', ()=>{
 
 canvas.addEventListener("click", (event) => {
     if(game.isOver) return;
-    console.log(event.x,event.y);
     
     let mousePos = { 
         x :Math.floor(event.offsetX / globals.cellSize),
@@ -54,6 +63,7 @@ canvas.addEventListener("click", (event) => {
 
 
 function gameLoop(){
+    ctx.clearRect(0,0 ,canvas.width ,canvas.height)
     gridManager.draw();
     window.requestAnimationFrame(gameLoop)
 }

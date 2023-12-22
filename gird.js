@@ -28,6 +28,17 @@ export default class GridManager {
         }
     }
 
+    resetGrid(){
+        this.winnerCount = 0;
+        this.winnerCellStack = [];
+
+        for (let i = 0; i < this.colm; i++) {
+            for (let j = 0; j < this.row; j++) {
+                this.grid[i][j].resetCell(i,j)
+            }
+        }
+    }
+
     draw() {
         this.grid.forEach(colm => {
             colm.forEach(cell => {
@@ -48,7 +59,7 @@ export default class GridManager {
         })
     }
 
-    checkWin(i,j){
+    checkWin(i,j , turnX){
         let currentCell = this.grid[i][j];
         for (let index = 0; index < globals.dx.length; index++) {
             this.winnerCount = 0;
@@ -68,7 +79,14 @@ export default class GridManager {
                     for (let index = -1 * this.winnerStackCount; index < this.winnerStackCount; index++) {
 
                         if(this.winnerCount === this.winnerStackCount){
+                            if(turnX){
+                                game.xScore++;
+                            }
+                            else{
+                                game.oScore++;
+                            }
                             this.celebrateTheWinnerCells();
+                            game.displayScore();
                             return;
                         }
 
@@ -105,19 +123,20 @@ export default class GridManager {
             this.grid[i][j].playX(); // X playing
             game.turnPlayed = true;  //switching X - O 
             this.winnerCount = 0;    //didnt like this code
-            this.checkWin(i,j);      
+            this.checkWin(i,j , turnX);      
         }
         else {
             this.grid[i][j].playO();  // O playing
             game.turnPlayed = true;   //switching X - O 
             this.winnerCount = 0;
-            this.checkWin(i,j);
+            this.checkWin(i,j , turnX);
         }
         game.totalMove++;
 
         //Checking tie
         if(game.totalMove === game.maxMoveCount && !game.isOver){
-            console.log("Tie")
+            game.tieScore++;
+            game.displayScore();
             game.isOver = true;
         }
     }

@@ -5,7 +5,7 @@ export default class Globals{
         this.columns = 3;
         this.winnerStackCount = 3;
         
-        this.cellSize = 300, //setting this after page load 
+        this.cellSize = 300, 
 
         this.colors = {
             // xo : "#DCD7C9",

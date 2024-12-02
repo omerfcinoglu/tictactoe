@@ -27,10 +27,6 @@ document.getElementById("body").style.backgroundColor = globals.colors.bodyBg;
 canvas.style.backgroundColor = globals.colors.canvasBg;
 // canvas.style.border = `15px solid ${globals.colors.gridBorder}`; 
 
-
-
-
-
 gridManager.initGrid();
 game.displayScore();
 

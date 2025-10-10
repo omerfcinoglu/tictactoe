@@ -6,6 +6,8 @@ const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 const restartButton = document.getElementById('restartButton');
 const settingApplyButton = document.getElementById('applyButton');
+const gridWidthInput = document.getElementById('gridWidth');
+const winCountInput = document.getElementById('winCount');
 
 const globals = new Globals();
 const game = new Game();
@@ -33,12 +35,25 @@ function createGrid() {
     game.maxMoveCount = gridManager.row * gridManager.colm;
 }
 
+function updateWinCountMax() {
+    const gridSize = parseInt(gridWidthInput.value) || 3;
+    const currentWinCount = parseInt(winCountInput.value) || 3;
+
+    winCountInput.max = gridSize;
+
+    if (currentWinCount > gridSize) {
+        winCountInput.value = gridSize;
+    }
+}
+
 function getGameSettings() {
     return {
         row: document.getElementById('gridWidth').value,
         winCount: document.getElementById('winCount').value
     }
 }
+
+updateWinCountMax();
 
 applySettings();
 updateCanvas();
@@ -49,7 +64,21 @@ canvas.style.backgroundColor = globals.colors.canvasBg;
 
 game.displayScore();
 
+gridWidthInput.addEventListener('input', () => {
+    updateWinCountMax();
+});
+
+winCountInput.addEventListener('input', () => {
+    const gridSize = parseInt(gridWidthInput.value) || 3;
+    const currentWinCount = parseInt(winCountInput.value) || 3;
+
+    if (currentWinCount > gridSize) {
+        winCountInput.value = gridSize;
+    }
+});
+
 restartButton.addEventListener('click', () => {
+    updateWinCountMax();
     applySettings();
     updateCanvas();
     createGrid();
@@ -57,6 +86,7 @@ restartButton.addEventListener('click', () => {
 })
 
 settingApplyButton.addEventListener('click', () => {
+    updateWinCountMax();
     applySettings();
     updateCanvas();
     createGrid();
